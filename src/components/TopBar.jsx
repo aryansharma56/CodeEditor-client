@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TopBar = ({ roomId, socketInstance, lang, setLang }) => {
+export const TopBar = ({ roomId, socketInstance, lang, setLang, prevLang }) => {
   console.log(lang);
   const options = [
     {
@@ -22,8 +22,8 @@ export const TopBar = ({ roomId, socketInstance, lang, setLang }) => {
           className=" bg-[#31363F]"
           value={lang}
           onChange={(e) => {
+            // prevLang.current = lang;
             setLang(e.target.value);
-            // console.log(lang);
             const l = e.target.value;
             console.log(l);
             socketInstance.emit("lang-select", { roomId, lang: l });

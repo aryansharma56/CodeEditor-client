@@ -22,9 +22,10 @@ export const TextEditor = () => {
 
   const [clients, setClients] = useState([]);
   let runCode = useRef("");
+  let prevLang = useRef("");
+  // "https://13-60-57-20.traefik.me/"
   useEffect(() => {
-    const socketInstance = io("http://localhost:3000");
-    console.log(typeof socketInstance);
+    const socketInstance = io("https://13-60-57-20.traefik.me/");
     setSocket(socketInstance);
     console.log("requesting....");
     socketInstance.on("connect", () => {
@@ -33,23 +34,31 @@ export const TextEditor = () => {
     });
     socketInstance.on("user-joined", (usr) => {
       console.log(usr + " joined the chat!");
-      // setClients((prev) => [...prev, usr]);
-      // socketInstance.emit("connected-users", clients);
+      setClients((prev) => [...prev, usr]);
+      // if (username === clients[0]) {
+      //   // socketInstance.emit("lang-select", { roomId, lang });
+      //   socketInstance.emit("text-change", {
+      //     roomId,
+      //     username,
+      //     data: runCode.current,
+      //   });
+      // }
+      socketInstance.emit("connected-users", clients);
     });
-    socketInstance.on("connected-users", (users) => {
+    socketInstance.on("connected-users", ({ users, lang }) => {
       console.log("Users Connected: ", users);
+      console.log(lang);
+      setLang(lang);
       setClients(users);
-      if (clients.length > 1) {
-        for (let i = 0; i < clients.length; i++) {
-          if (clients[i] !== username) {
-            socketInstance.emit("lang-select", { roomId, lang });
-            socketInstance.emit("text-change", {
-              roomId,
-              username,
-              data: runCode.current,
-            });
-            break;
-          }
+      if (users.length > 1) {
+        if (users[0] === username) {
+          console.log("language selected is", lang);
+          // socketInstance.emit("lang-select", { roomId, lang });
+          socketInstance.emit("text-change", {
+            roomId,
+            username,
+            data: runCode.current,
+          });
         }
       }
     });
@@ -59,8 +68,9 @@ export const TextEditor = () => {
       // setTimeout(() => {
       // }, 200);
     });
-    socketInstance.on("lang-select", (language) => {
-      setLang(language.lang);
+    socketInstance.on("lang-select", ({ roomId, lang }) => {
+      console.log("language from backend", lang);
+      setLang(lang);
     });
   }, []);
   // useEffect(() => {
@@ -115,6 +125,7 @@ export const TextEditor = () => {
         socketInstance={socket}
         lang={lang}
         setLang={setLang}
+        prevLang={prevLang}
         className="sticky"
       />
       <div className="flex flex-row">
