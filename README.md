@@ -1,70 +1,176 @@
-# Getting Started with Create React App
+# Real-Time Collaborative Code Editor
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A **real-time collaborative code editor** built with **React**, **Monaco Editor**, and **Socket.IO**, featuring multi-user rooms, live code synchronization, language selection, and online code execution via a compiler API.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Tech Stack
 
-### `npm start`
+* **React**
+* **Monaco Editor**
+* **Socket.IO (WebSockets)**
+* **Axios**
+* **RapidAPI Online Code Compiler**
+* **React Router**
+* **Tailwind CSS**
+* **Node.js (Socket backend)**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Features
 
-### `npm test`
+* 👥 Multi-user collaborative editing
+* 🔗 Room-based collaboration using Room IDs
+* 🔄 Real-time code synchronization
+* 🌐 Language selection synced across users
+* ▶️ Run code online with custom input
+* 📋 Copy Room ID with one click
+* 🧠 Host-aware state syncing
+* 🖥 Monaco Editor (VS Code-like experience)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## How It Works
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Room System
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+* Each room is identified by a unique `roomId`
+* Users join rooms via URL parameters
+* Connected users are displayed in real time
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+### Real-Time Collaboration
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+* Code changes are broadcast using `socket.emit("text-change")`
+* Remote updates are reflected instantly in Monaco Editor
+* Uses debouncing to prevent excessive network calls
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Language Synchronization
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+* Programming language selection is synced across all users
+* The first user acts as the source of truth for language state
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Code Execution
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+* Code is sent to an external compiler API
+* Supports custom stdin input
+* Displays output in real time
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## UI Overview
 
-### Analyzing the Bundle Size
+### Left Panel
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+* Room ID (copyable)
+* List of connected users
 
-### Making a Progressive Web App
+### Main Panel
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+* Monaco code editor
+* Run button
+* Input / Output consoles
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Component Overview
 
-### Deployment
+```jsx
+<TextEditor />
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Key Responsibilities
 
-### `npm run build` fails to minify
+* Socket connection lifecycle
+* Editor state synchronization
+* Compiler API integration
+* UI state management
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+## Socket Events Used
+
+| Event Name        | Direction       | Purpose                  |
+| ----------------- | --------------- | ------------------------ |
+| `join-room`       | Client → Server | Join collaboration room  |
+| `user-joined`     | Server → Client | Notify when a user joins |
+| `connected-users` | Server → Client | Sync users and language  |
+| `text-change`     | Bi-directional  | Sync editor content      |
+| `lang-select`     | Bi-directional  | Sync language            |
+
+---
+
+## Code Execution Flow
+
+1. User clicks **Run**
+2. Code + input + language sent to compiler API
+3. Output returned and rendered
+4. UI resets run state
+
+---
+
+## Environment Setup
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Start Frontend
+
+```bash
+npm start
+```
+
+---
+
+## Routing & URL Format
+
+```
+/room/:roomId?username=<your-name>
+```
+
+**Example**
+
+```
+/room/abc123?username=Aryan
+```
+
+---
+
+## Limitations
+
+* Single-file editing
+* No cursor tracking
+* No conflict resolution (last-write-wins)
+* External compiler dependency
+* No offline support
+
+---
+
+## Why This Project?
+
+This project demonstrates:
+
+* Real-time systems using WebSockets
+* Collaborative application design
+* Third-party API integration
+* Advanced frontend state management
+* Interview-relevant React architecture
+
+---
+
+## Future Enhancements
+
+* Cursor & selection sharing
+* File tree support
+* Offline persistence
+* Language-specific templates
+* Execution logs & errors
+* Self-hosted compiler backend
